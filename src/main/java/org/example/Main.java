@@ -7,14 +7,12 @@ public class Main {
         Thread threadA = new Thread(task2::fizz);
         Thread threadB = new Thread(task2::buzz);
         Thread threadC = new Thread(task2::fizzBuzz);
-        Thread threadD = new Thread(() -> task2.number(System.out::println));
-        Thread print = new Thread(task2::print);
+        Thread threadD = new Thread(task2::number);
 
         threadA.start();
         threadB.start();
         threadC.start();
         threadD.start();
-        print.start();
 
     }
 }
