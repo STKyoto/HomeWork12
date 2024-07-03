@@ -20,71 +20,96 @@ public class Task2 {
                 break;
             }
             if ((number % 3 == 0) && (number % 5 != 0)) {
-                try {
+                    try {
                     queue.put("fizz");
-                } catch (InterruptedException e) {
+                    current.incrementAndGet();
+                    synchronized (this){
+                        notifyAll();
+                    }
+                        } catch (InterruptedException e) {
                     throw new RuntimeException(e);
+                        }
                 }
-                current.incrementAndGet();
             }
         }
-    }
 
     public void buzz() {
-        while (true) {
-            int number = current.get();
-            if (number > n) {
-                break;
-            }
-            if ((number % 3 != 0) && (number % 5 == 0)) {
-                try {
-                    queue.put("buzz");
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
+            while (true) {
+                int number = current.get();
+                if (number > n) {
+                    break;
                 }
-                current.incrementAndGet();
+                if ((number % 3 != 0) && (number % 5 == 0)) {
+                    try {
+                        queue.put("buzz");
+                        current.incrementAndGet();
+                        synchronized (this){
+                            notifyAll();
+                        }
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
             }
-        }
     }
 
     public void fizzBuzz() {
-        while (true) {
-            int number = current.get();
-            if (number > n) {
-                break;
-            }
-            if ((number % 3 == 0) && (number % 5 == 0)) {
-                try {
-                    queue.put("fizzbuzz");
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
+            while (true) {
+                int number = current.get();
+                if (number > n) {
+                    break;
                 }
-                current.incrementAndGet();
+                if ((number % 3 == 0) && (number % 5 == 0)) {
+                    try {
+                        queue.put("fizzbuzz");
+                        current.incrementAndGet();
+                        synchronized (this){
+                            notifyAll();
+                        }
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
             }
-        }
     }
 
     public void number() {
-        while (true) {
-            int number = current.get();
-            if (number > n) {
-                break;
-            }
-            if ((number % 3 != 0) && (number % 5 != 0)) {
-                try {
-                    queue.put(String.valueOf(number));
-                } catch (InterruptedException e) {
-                    throw new RuntimeException(e);
+            while (true) {
+                int number = current.get();
+                if (number > n) {
+                    break;
                 }
-                current.incrementAndGet();
+                if ((number % 3 != 0) && (number % 5 != 0)) {
+                    try {
+                        queue.put(String.valueOf(number));
+                        current.incrementAndGet();
+                        synchronized (this){
+                            notifyAll();
+                        }
+                    } catch (InterruptedException e) {
+                        throw new RuntimeException(e);
+                    }
+                }
             }
-        }
-        while (!queue.isEmpty()) {
-            try {
-                Thread.sleep(500);
-                System.out.println(queue.take());
-            } catch (InterruptedException e) {
-                throw new RuntimeException(e);
+    }
+    public void print(){
+        while (true) {
+            synchronized (this) {
+                while (queue.isEmpty() && current.get() <= n) {
+                    try {
+                        wait();
+                    } catch (InterruptedException e) {
+                        Thread.currentThread().interrupt();
+                    }
+                }
+                if (queue.isEmpty() && current.get() > n) {
+                    break;
+                }
+                try {
+                    System.out.println(queue.take());
+                } catch (InterruptedException e) {
+                    Thread.currentThread().interrupt();
+                }
             }
         }
     }
